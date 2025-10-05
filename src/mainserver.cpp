@@ -6,9 +6,13 @@ bool led1_state = false;
 bool led2_state = false;
 bool isAPMode = true;
 
+// Add these variables to store the last valid sensor readings
+float last_temperature = 0;
+float last_humidity = 0;
+
 WebServer server(80);
 
-String ssid = "ESP32-YOUR NETWORK HERE!!!";
+String ssid = "DONT CONNECT ME";
 String password = "12345678";
 String wifi_ssid = "";
 String wifi_password = "";
@@ -17,8 +21,17 @@ unsigned long connect_start_ms = 0;
 bool connecting = false;
 
 String mainPage() {
-  float temperature = glob_temperature;
-  float humidity = glob_temperature;
+  // Update last known good values if current values are valid
+  if (glob_temperature != -1) {
+    last_temperature = glob_temperature;
+  }
+  if (glob_humidity != -1) {
+    last_humidity = glob_humidity;
+  }
+
+  // Use last known good values for initial display
+  float temperature = last_temperature;
+  float humidity = last_humidity;
   String led1 = led1_state ? "ON" : "OFF";
   String led2 = led2_state ? "ON" : "OFF";
 
@@ -209,6 +222,9 @@ void main_server_task(void *pvParameters){
       }
     }
 
+    //Update state of D3 and NEO
+    led_D3 = led1_state;
+    led_NEO = led2_state;
     vTaskDelay(20); // avoid watchdog reset
   }
 }
