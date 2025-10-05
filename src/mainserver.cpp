@@ -12,7 +12,7 @@ float last_humidity = 0;
 
 WebServer server(80);
 
-String ssid = "DONT CONNECT ME";
+String ssid = "MY-ESP32-NETWORK";
 String password = "12345678";
 String wifi_ssid = "";
 String wifi_password = "";
